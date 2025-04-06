@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Notepad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --light-bg: #f5f5fa;
+      --light-text: #1a1a1a;
+      --dark-bg: #121212;
+      --dark-text: #e0e0e0;
+      --primary: #4f46e5;
+      --accent: #10b981;
+      --border-radius: 12px;
+      --transition: 0.3s;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      transition: background-color var(--transition), color var(--transition);
+      background-color: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      background-color: white;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .controls label {
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    .notepad {
+      width: 100%;
+      min-height: 300px;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid var(--primary);
+      border-radius: var(--border-radius);
+      resize: vertical;
+      background-color: #ffffff;
+      color: black;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    .dark-theme {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    .dark-theme .notepad {
+      background-color: #1f1f1f;
+      color: #ffffff;
+    }
+
+    .save-btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color var(--transition), transform var(--transition);
+    }
+
+    .save-btn:hover {
+      background-color: #0e9e73;
+      transform: scale(1.05);
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity var(--transition) ease, transform var(--transition) ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media screen and (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="white-theme">
+  <div class="container" id="notepad-container">
+    <div class="controls">
+      <label>
+        Theme:
+        <select id="theme-selector">
+          <option value="white">White</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+      <label>
+        Text Color:
+        <select id="color-selector">
+          <option value="black">Black</option>
+          <option value="white">White</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="purple">Purple</option>
+          <option value="orange">Orange</option>
+          <option value="deeppink">Pink</option>
+        </select>
+      </label>
+      <button class="save-btn" id="save-btn">💾 Save Note</button>
+    </div>
+    <textarea id="notepad" class="notepad" placeholder="Start typing your notes here..."></textarea>
+    <div class="popup" id="save-popup">Note saved successfully!</div>
+  </div>
+
+  <script>
+    const themeSelector = document.getElementById("theme-selector");
+    const colorSelector = document.getElementById("color-selector");
+    const notepad = document.getElementById("notepad");
+    const saveBtn = document.getElementById("save-btn");
+    const popup = document.getElementById("save-popup");
+
+    themeSelector.addEventListener("change", function () {
+      document.body.className = this.value + "-theme";
+    });
+
+    colorSelector.addEventListener("change", function () {
+      notepad.style.color = this.value;
+    });
+
+    notepad.addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = this.scrollHeight + "px";
+    });
+
+    saveBtn.addEventListener("click", function () {
+      localStorage.setItem("savedNote", notepad.value);
+      popup.classList.add("show");
+      setTimeout(() => {
+        popup.classList.remove("show");
+      }, 2000);
+    });
+
+    window.addEventListener("load", function () {
+      const saved = localStorage.getItem("savedNote");
+      if (saved) notepad.value = saved;
+    });
+  </script>
+</body>
+</html>
